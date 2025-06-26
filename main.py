@@ -1,54 +1,69 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
-from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QGraphicsScene
+from PyQt5.QtCore import Qt, QObject, QEvent, QRectF
 from ui_qrtag import Ui_MainWindow
 from string import ascii_uppercase
-from PyQt5.QtCore import QObject, QEvent, Qt
+import qrcode
+from PyQt5.QtGui import QPixmap, QImage, QPainter
+from PyQt5.QtPrintSupport import QPrinter, QPrintDialog
 
 class DigitOnlyFilter(QObject):
-    def eventFilter(self, obj, event):
-        if event.type() == QEvent.KeyPress:
-            key = event.key()
-            text = event.text()
-          
-            if text in "0123456789" or key in (
-                Qt.Key_Backspace, Qt.Key_Delete,
-                Qt.Key_Left, Qt.Key_Right,
-                Qt.Key_Home, Qt.Key_End,
-                Qt.Key_Tab, Qt.Key_Return, Qt.Key_Enter
-            ):
-                return False 
-            else:
-                return True  
+    def __init__(self, parent=None, max_length=5):
+        super().__init__(parent)
+        self.max_length = max_length
+        self.enabled = True
 
-        return False
     def eventFilter(self, obj, event):
-        if event.type() == QEvent.KeyPress:
-            key = event.key()
-            text = event.text()
-            
-            if text.isdigit() or key in (
+        if not self.enabled:
+            return False
+
+            allowed_keys = (
                 Qt.Key_Backspace, Qt.Key_Delete,
                 Qt.Key_Left, Qt.Key_Right,
                 Qt.Key_Home, Qt.Key_End,
                 Qt.Key_Tab, Qt.Key_Return, Qt.Key_Enter
-            ):
-                return False  
-            else:
-                return True  
-        return False  
+            )
+
+            if key in allowed_keys:
+                return False
+
+            if text.isdigit():
+                current_text = obj.toPlainText()
+                cursor = obj.textCursor()
+                if len(current_text) < self.max_length or cursor.hasSelection():
+                    return False
+                else:
+                    return True
+            return True
+        return False
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-       
+        self.ui.checkBox_2.setChecked(True)
+        self.super_string = ""
+        
+        self.ui.checkBox_3.toggled.connect(self.on_checkbox3_toggled)
+        self.ui.plainTextEdit_2.textChanged.connect(self.on_manual_text_changed)
+         # Устанавливаем начальное состояние (если чекбокс уже checked)
+        
+
         self.ui.checkBox.setChecked(True)
         self.limit_plainTextEdit_length(True)
-       
-        self.digit_filter = DigitOnlyFilter(self)
+
+        # SKU поле (6 цифр)
+        self.digit_filter = DigitOnlyFilter(self, max_length=6)
         self.ui.plainTextEdit.installEventFilter(self.digit_filter)
         self.ui.plainTextEdit.textChanged.connect(self.clean_plainTextEdit)
+
+        # Новые поля (5 цифр)
+        self.digit_filter_3 = DigitOnlyFilter(self, max_length=5)
+        self.digit_filter_4 = DigitOnlyFilter(self, max_length=5)
+        self.ui.plainTextEdit_3.installEventFilter(self.digit_filter_3)
+        self.ui.plainTextEdit_4.installEventFilter(self.digit_filter_4)
+        self.ui.plainTextEdit_3.textChanged.connect(lambda: self.trim_text(self.ui.plainTextEdit_3, 5))
+        self.ui.plainTextEdit_4.textChanged.connect(lambda: self.trim_text(self.ui.plainTextEdit_4, 5))
 
         self.ui.checkBox.toggled.connect(self.on_sku_toggled)
         self.ui.plainTextEdit.textChanged.connect(self.on_plainTextEdit_changed)
@@ -59,7 +74,7 @@ class MainWindow(QMainWindow):
         self.ui.comboBox.addItem("")  
         self.ui.comboBox.addItems(self.allowed_letters)
         self.ui.comboBox.setCurrentIndex(-1)  
-       
+        self.on_checkbox3_toggled(self.ui.checkBox_3.isChecked())
         self.ui.comboBox.lineEdit().textEdited.connect(self.on_letter_edited)
         self.ui.comboBox.currentIndexChanged.connect(self.update_code)
         self.ui.comboBox.lineEdit().textChanged.connect(self.update_code)
@@ -84,9 +99,77 @@ class MainWindow(QMainWindow):
 
         # SKU
         self.ui.plainTextEdit.textChanged.connect(self.update_code)
-
+        self.ui.plainTextEdit_3.textChanged.connect(self.update_code)
+        self.ui.plainTextEdit_4.textChanged.connect(self.update_code)
         self.ui.pushButton.clicked.connect(self.on_print)
         self.ui.actionAbout.triggered.connect(self.show_about)
+        
+        self.ui.plainTextEdit_3.textChanged.connect(self.on_plainTextEdit_3_changed)
+        self.on_plainTextEdit_3_changed()
+    
+    def on_manual_text_changed(self):
+        if self.ui.checkBox_3.isChecked():  # manual включён
+            self.super_string = self.ui.plainTextEdit_2.toPlainText().strip()
+            self.update_qr_code()
+    
+    def update_qr_code(self):
+        data = self.super_string.strip()
+        if not data:
+            self.ui.label_qr.clear()
+            return
+
+        qr = qrcode.QRCode(
+            version=1,
+            error_correction=qrcode.constants.ERROR_CORRECT_M,
+            box_size=12,  # увеличь для качества
+            border=1,
+        )
+        qr.add_data(data)
+        qr.make(fit=True)
+
+        img = qr.make_image(fill_color="black", back_color="white").convert("RGB")
+
+        # PIL Image -> QByteArray -> QImage
+        img_data = img.tobytes("raw", "RGB")
+        qimg = QImage(img_data, img.size[0], img.size[1], QImage.Format_RGB888)
+
+        pixmap = QPixmap.fromImage(qimg)
+
+        # Получаем размер QLabel
+        label_size = self.ui.label_qr.size()
+
+        # Масштабируем pixmap под размер QLabel с сохранением пропорций
+        scaled_pixmap = pixmap.scaled(label_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+
+        self.ui.label_qr.setPixmap(scaled_pixmap)
+        self.ui.label_qr.setAlignment(Qt.AlignCenter)
+
+        
+    def on_checkbox3_toggled(self, checked):
+         # Если включен — редактируемое, иначе только чтение
+        self.ui.plainTextEdit_2.setReadOnly(not checked)    
+        
+        if checked:
+            self.ui.checkBox_3.setStyleSheet("color: red;")
+            # Копируем текущее значение суперпеременной в поле для ручного редактирования,
+            text_to_copy = self.ui.plainTextEdit.toPlainText().strip()
+            self.ui.plainTextEdit_2.blockSignals(True)
+            self.ui.plainTextEdit_2.setPlainText(self.super_string)
+            self.ui.plainTextEdit_2.blockSignals(False)
+            self.ui.plainTextEdit.blockSignals(True)
+            self.ui.plainTextEdit.clear()
+            self.ui.plainTextEdit.blockSignals(False)
+
+        # Обновляем super_string и QR код (на всякий случай)
+            self.super_string = self.ui.plainTextEdit_2.toPlainText().strip()
+            self.update_qr_code()
+        else:
+            self.ui.checkBox_3.setStyleSheet("")
+            self.update_code()
+        
+    def on_plainTextEdit_3_changed(self):
+        text = self.ui.plainTextEdit_3.toPlainText().strip()
+        self.ui.plainTextEdit_4.setEnabled(bool(text))
 
     def clean_plainTextEdit(self):
         text = self.ui.plainTextEdit.toPlainText()
@@ -100,15 +183,45 @@ class MainWindow(QMainWindow):
             cursor.setPosition(min(pos, len(filtered)))
             self.ui.plainTextEdit.setTextCursor(cursor)
 
+    def trim_text(self, widget, max_length):
+        text = widget.toPlainText()
+        filtered = ''.join(c for c in text if c.isdigit())[:max_length]
+        if text != filtered:
+            cursor = widget.textCursor()
+            pos = cursor.position()
+            widget.blockSignals(True)
+            widget.setPlainText(filtered)
+            widget.blockSignals(False)
+            cursor.setPosition(min(pos, len(filtered)))
+            widget.setTextCursor(cursor)
+
     def on_print(self):
-        value1 = self.ui.lineEdit.text()
-        value2 = self.ui.lineEdit_2.text()
-        print("Print:")
-        print("Size 1:", value1)
-        print("Size 2:", value2)
+        pixmap = self.ui.label_qr.pixmap()
+        if not pixmap:
+            QMessageBox.warning(self, "Ошибка", "QR-код не сгенерирован.")
+            return
+
+        printer = QPrinter(QPrinter.HighResolution)
+        # Здесь вместо setPageOrientation используем setOrientation
+        printer.setOrientation(QPrinter.Portrait)  # альбомная — Landscape
+
+        dialog = QPrintDialog(printer, self)
+        if dialog.exec_() != QPrintDialog.Accepted:
+            return
+
+        painter = QPainter(printer)
+        page_rect = printer.pageRect()
+        scaled = pixmap.scaled(
+            page_rect.size(),
+            Qt.KeepAspectRatio,
+            Qt.SmoothTransformation
+        )
+        x = (page_rect.width() - scaled.width()) // 2
+        y = (page_rect.height() - scaled.height()) // 2
+        painter.drawPixmap(x, y, scaled)
+        painter.end()
 
     def update_code(self):
-        # karat
         if self.ui.radioButton.isChecked():
             grade = "10"
         elif self.ui.radioButton_2.isChecked():
@@ -124,7 +237,6 @@ class MainWindow(QMainWindow):
         else:
             grade = ""
 
-        # color
         if self.ui.radioButton_7.isChecked():
             color = "YE"
         elif self.ui.radioButton_8.isChecked():
@@ -144,28 +256,37 @@ class MainWindow(QMainWindow):
         else:
             color = ""
 
-        # SKU
         item_code = self.ui.plainTextEdit.toPlainText().strip()
 
-        # Letter
         letter = self.ui.comboBox.currentText().strip().upper()
         if not (letter == "" or (len(letter) == 1 and letter in self.allowed_letters)):
             letter = ""
+        suffix = self.ui.plainTextEdit_3.toPlainText().strip()
+        amp = self.ui.plainTextEdit_4.toPlainText().strip()
 
-        # String
-        result = f"{grade}{color}{letter}".strip()
+        result = f"{grade}{color}{suffix}"
+        if amp:
+            result += f"&{amp}"
+
+        result+= letter
         self.ui.plainTextEdit_2.setPlainText(result)
+        
+        
+        # Формируем суперстроку: SKU / результат
+        sku = self.ui.plainTextEdit.toPlainText().strip()
+        self.super_string = f"{sku}/{result}" if sku else result
+
+        self.update_qr_code()
 
     def on_letter_edited(self, text):
         text = text.strip().upper()
-
         if text == "":
-            return  
-
+            return
         if len(text) == 1 and text in self.allowed_letters:
             pass
         else:
-            self.ui.comboBox.setCurrentIndex(0)  
+            self.ui.comboBox.setCurrentIndex(0)
+
     def on_sku_toggled(self, checked):
         self.limit_plainTextEdit_length(checked)
 
@@ -185,7 +306,6 @@ class MainWindow(QMainWindow):
                 self.ui.plainTextEdit.blockSignals(False)
                 cursor.setPosition(min(pos, 6))
                 self.ui.plainTextEdit.setTextCursor(cursor)
-
 
     def show_about(self):
         about_box = QMessageBox(self)

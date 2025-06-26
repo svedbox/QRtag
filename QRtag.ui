@@ -48,22 +48,6 @@
      <string>Preview</string>
     </property>
    </widget>
-   <widget class="QGraphicsView" name="graphicsView">
-    <property name="geometry">
-     <rect>
-      <x>440</x>
-      <y>130</y>
-      <width>264</width>
-      <height>264</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Arial</family>
-      <pointsize>16</pointsize>
-     </font>
-    </property>
-   </widget>
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
@@ -737,9 +721,21 @@
      <string>Print</string>
     </property>
    </widget>
+   <widget class="QLabel" name="label_qr">
+    <property name="geometry">
+     <rect>
+      <x>445</x>
+      <y>130</y>
+      <width>264</width>
+      <height>264</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
    <zorder>groupBox_3</zorder>
    <zorder>label</zorder>
-   <zorder>graphicsView</zorder>
    <zorder>label_2</zorder>
    <zorder>plainTextEdit</zorder>
    <zorder>label_3</zorder>
@@ -751,6 +747,7 @@
    <zorder>groupBox_5</zorder>
    <zorder>checkBox_3</zorder>
    <zorder>pushButton</zorder>
+   <zorder>label_qr</zorder>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QMenuBar" name="menuBar">
