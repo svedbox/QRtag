@@ -734,6 +734,41 @@
      <string/>
     </property>
    </widget>
+   <widget class="QGroupBox" name="groupBox_6">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>590</y>
+      <width>261</width>
+      <height>81</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Arial</family>
+      <pointsize>16</pointsize>
+     </font>
+    </property>
+    <property name="title">
+     <string/>
+    </property>
+    <layout class="QGridLayout" name="gridLayout_4">
+     <item row="0" column="0">
+      <widget class="QRadioButton" name="radioButton_15">
+       <property name="text">
+        <string>DYMO</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QRadioButton" name="radioButton_16">
+       <property name="text">
+        <string>Zebra</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
    <zorder>groupBox_3</zorder>
    <zorder>label</zorder>
    <zorder>label_2</zorder>
@@ -748,6 +783,7 @@
    <zorder>checkBox_3</zorder>
    <zorder>pushButton</zorder>
    <zorder>label_qr</zorder>
+   <zorder>groupBox_6</zorder>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QMenuBar" name="menuBar">

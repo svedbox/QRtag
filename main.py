@@ -1,10 +1,13 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QGraphicsScene
-from PyQt5.QtCore import Qt, QObject, QEvent, QRectF
+from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QGraphicsScene, QStyleFactory, QDialog, QLabel, QVBoxLayout
+from PyQt5.QtCore import Qt, QObject, QEvent, QRectF, QSizeF
 from ui_qrtag import Ui_MainWindow
 from string import ascii_uppercase
 import qrcode
-from PyQt5.QtGui import QPixmap, QImage, QPainter
+from PyQt5.QtGui import QPixmap, QImage, QPainter, QPalette, QColor, QFont, QTransform
 from PyQt5.QtPrintSupport import QPrinter, QPrintDialog
+import tempfile
+import subprocess
+from PIL import Image
 
 class DigitOnlyFilter(QObject):
     def __init__(self, parent=None, max_length=5):
@@ -101,11 +104,16 @@ class MainWindow(QMainWindow):
         self.ui.plainTextEdit.textChanged.connect(self.update_code)
         self.ui.plainTextEdit_3.textChanged.connect(self.update_code)
         self.ui.plainTextEdit_4.textChanged.connect(self.update_code)
-        self.ui.pushButton.clicked.connect(self.on_print)
+        self.ui.pushButton.clicked.connect(self.print_label)
         self.ui.actionAbout.triggered.connect(self.show_about)
         
         self.ui.plainTextEdit_3.textChanged.connect(self.on_plainTextEdit_3_changed)
         self.on_plainTextEdit_3_changed()
+
+         # Радиокнопки выбора принтера
+        self.ui.radioButton_15.setChecked(True)        # DYMO — выбран по умолчанию
+        self.ui.radioButton_16.setEnabled(False)       # Zebra — отображается, но неактивна
+
     
     def on_manual_text_changed(self):
         if self.ui.checkBox_3.isChecked():  # manual включён
@@ -195,32 +203,127 @@ class MainWindow(QMainWindow):
             cursor.setPosition(min(pos, len(filtered)))
             widget.setTextCursor(cursor)
 
-    def on_print(self):
-        pixmap = self.ui.label_qr.pixmap()
-        if not pixmap:
-            QMessageBox.warning(self, "Ошибка", "QR-код не сгенерирован.")
+    def print_label(self):
+        # Проверяем, выбран ли DYMO радиобокс
+        if self.ui.radioButton_15.isChecked():
+            self.print_label_dymo()
+        else:
+            QMessageBox.information(self, "Печать", "Печать для выбранного принтера пока не реализована.")
+
+    def print_label_dymo(self):
+        if not self.super_string.strip():
+            QMessageBox.warning(self, "Ошибка", "Пожалуйста, заполните поле Item Code перед печатью.")
             return
+        dpi = 300  # для DYMO
+        mm_to_px = lambda mm: int((mm / 25.4) * dpi)
 
-        printer = QPrinter(QPrinter.HighResolution)
-        # Здесь вместо setPageOrientation используем setOrientation
-        printer.setOrientation(QPrinter.Portrait)  # альбомная — Landscape
+        width_mm, height_mm = 62, 31  # альбом
+        width_px = mm_to_px(width_mm)
+        height_px = mm_to_px(height_mm)
 
-        dialog = QPrintDialog(printer, self)
-        if dialog.exec_() != QPrintDialog.Accepted:
-            return
+        image = QImage(width_px, height_px, QImage.Format_RGB32)
+        image.fill(Qt.white)
+        painter = QPainter(image)
+        painter.setRenderHint(QPainter.Antialiasing)
 
-        painter = QPainter(printer)
-        page_rect = printer.pageRect()
-        scaled = pixmap.scaled(
-            page_rect.size(),
-            Qt.KeepAspectRatio,
-            Qt.SmoothTransformation
+        # --- QR-код ---
+        qr = qrcode.QRCode(
+            version=1,
+            error_correction=qrcode.constants.ERROR_CORRECT_M,
+            box_size=1,
+            border=0
         )
-        x = (page_rect.width() - scaled.width()) // 2
-        y = (page_rect.height() - scaled.height()) // 2
-        painter.drawPixmap(x, y, scaled)
+        qr.add_data(self.super_string.strip() or "TEST-QR")
+        qr.make(fit=True)
+        matrix = qr.get_matrix()
+
+        qr_size_mm = 10
+        qr_size_px = mm_to_px(qr_size_mm)
+        cell_size = qr_size_px // len(matrix)
+
+        qr_img = QImage(qr_size_px, qr_size_px, QImage.Format_RGB32)
+        qr_img.fill(Qt.white)
+        qp = QPainter(qr_img)
+        qp.setPen(Qt.NoPen)
+        qp.setBrush(Qt.black)
+
+        for y, row in enumerate(matrix):
+            for x, val in enumerate(row):
+                if val:
+                    qp.drawRect(x * cell_size, y * cell_size, cell_size, cell_size)
+        qp.end()
+
+        # Отрисовать QR в (3мм, 3мм)
+        qr_x = mm_to_px(10)
+        qr_y = mm_to_px(4)
+        sku_y = qr_y + qr_size_px  # дефолтное значение, если SKU нет
+        painter.drawImage(qr_x, qr_y, qr_img)
+
+                # --- Надпись Cut! ---
+        if self.ui.checkBox_2.isChecked():
+            cut_font = QFont("Arial", 16)
+            cut_font.setBold(True)
+            painter.setFont(cut_font)
+            painter.setPen(Qt.black)
+
+            cut_lines = ["Cut!", "Do", "NOT", "pull!"]
+            line_spacing = mm_to_px(2.5)  # расстояние между строками
+            base_x = qr_x + qr_size_px + mm_to_px(0)  # немного правее от QR
+            base_y = qr_y + qr_size_px + mm_to_px(-8.5)
+
+            for i, line in enumerate(cut_lines):
+                painter.drawText(base_x, base_y + i * line_spacing, line)
+
+        # --- SKU ниже QR ---
+        sku_text = self.ui.plainTextEdit.toPlainText().strip()
+        if sku_text:
+            sku_font = QFont("Arial", 24)
+            sku_font.setBold(False)
+            painter.setFont(sku_font)
+            
+            sku_x = qr_x  # на том же уровне по X, что и QR
+            sku_y = qr_y + qr_size_px + mm_to_px(3)  # немного ниже QR
+            
+            sku_text = self.ui.plainTextEdit.toPlainText().strip()
+            painter.drawText(sku_x, sku_y, sku_text)
+
+        # --- Содержимое textEdit_2 (сгенерированная строка) ---
+        code_text = self.ui.plainTextEdit_2.toPlainText().strip()
+        if code_text:
+            code_font = QFont("Arial", 18)
+            code_font.setBold(False)
+            painter.setFont(code_font)
+
+            code_y = sku_y + mm_to_px(3)  # немного ниже SKU
+
+            text_width = painter.fontMetrics().horizontalAdvance(code_text)
+            code_x = qr_x 
+
+            painter.drawText(code_x, code_y, code_text)
+
         painter.end()
 
+        # Предпросмотр
+        pixmap = QPixmap.fromImage(image)
+        self.show_label_preview(pixmap)
+
+    def show_label_preview(self, pixmap):
+        preview = QDialog(self)
+        preview.setWindowTitle("Предпросмотр этикетки")
+        preview.setModal(False)
+        preview.setAttribute(Qt.WA_DeleteOnClose)
+        preview.resize(pixmap.width() + 20, pixmap.height() + 20)
+
+        layout = QVBoxLayout()
+        label = QLabel()
+        label.setPixmap(pixmap)
+        label.setAlignment(Qt.AlignCenter)
+        layout.addWidget(label)
+
+        preview.setLayout(layout)
+        preview.show()
+
+    
     def update_code(self):
         if self.ui.radioButton.isChecked():
             grade = "10"
@@ -330,4 +433,3 @@ if __name__ == "__main__":
     window = MainWindow()
     window.show()
     app.exec_()
-
