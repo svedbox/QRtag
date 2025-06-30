@@ -217,7 +217,7 @@ class MainWindow(QMainWindow):
         dpi = 300  # для DYMO
         mm_to_px = lambda mm: int((mm / 25.4) * dpi)
 
-        width_mm, height_mm = 62, 31  # альбом
+        width_mm, height_mm = 31, 62  # альбом
         width_px = mm_to_px(width_mm)
         height_px = mm_to_px(height_mm)
 
@@ -304,8 +304,22 @@ class MainWindow(QMainWindow):
         painter.end()
 
         # Предпросмотр
-        pixmap = QPixmap.fromImage(image)
-        self.show_label_preview(pixmap)
+#        pixmap = QPixmap.fromImage(image)
+#        self.show_label_preview(pixmap)
+        printer = QPrinter(QPrinter.HighResolution)
+        printer.setPrinterName("DYMO LabelWriter")  # при необходимости укажи точное имя принтера
+        printer.setPageSizeMM(QSizeF(31, 62))
+        printer.setFullPage(True)
+        printer.setOrientation(QPrinter.Portrait)
+        printer.setPageMargins(0, 0, 0, 0, QPrinter.Millimeter)
+
+        painter = QPainter()
+        if not painter.begin(printer):
+            QMessageBox.critical(self, "Ошибка", "Не удалось начать печать.")
+            return
+        target_rect = printer.pageRect()  # логическая область печати
+        painter.drawImage(target_rect, image)
+        painter.end()
 
     def show_label_preview(self, pixmap):
         preview = QDialog(self)
