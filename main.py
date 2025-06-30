@@ -217,7 +217,7 @@ class MainWindow(QMainWindow):
         dpi = 300  # для DYMO
         mm_to_px = lambda mm: int((mm / 25.4) * dpi)
 
-        width_mm, height_mm = 31, 62  # альбом
+        width_mm, height_mm = 62, 31  # альбом
         width_px = mm_to_px(width_mm)
         height_px = mm_to_px(height_mm)
 
@@ -254,14 +254,14 @@ class MainWindow(QMainWindow):
         qp.end()
 
         # Отрисовать QR в (3мм, 3мм)
-        qr_x = mm_to_px(10)
-        qr_y = mm_to_px(4)
+        qr_x = mm_to_px(2)#--to right
+        qr_y = mm_to_px(6.5)#--to down
         sku_y = qr_y + qr_size_px  # дефолтное значение, если SKU нет
         painter.drawImage(qr_x, qr_y, qr_img)
 
                 # --- Надпись Cut! ---
         if self.ui.checkBox_2.isChecked():
-            cut_font = QFont("Arial", 16)
+            cut_font = QFont("Arial", 22)#--exactly size
             cut_font.setBold(True)
             painter.setFont(cut_font)
             painter.setPen(Qt.black)
@@ -277,12 +277,12 @@ class MainWindow(QMainWindow):
         # --- SKU ниже QR ---
         sku_text = self.ui.plainTextEdit.toPlainText().strip()
         if sku_text:
-            sku_font = QFont("Arial", 24)
+            sku_font = QFont("Arial", 32)
             sku_font.setBold(False)
             painter.setFont(sku_font)
             
             sku_x = qr_x  # на том же уровне по X, что и QR
-            sku_y = qr_y + qr_size_px + mm_to_px(3)  # немного ниже QR
+            sku_y = qr_y + qr_size_px + mm_to_px(5)  # немного ниже QR
             
             sku_text = self.ui.plainTextEdit.toPlainText().strip()
             painter.drawText(sku_x, sku_y, sku_text)
@@ -290,11 +290,11 @@ class MainWindow(QMainWindow):
         # --- Содержимое textEdit_2 (сгенерированная строка) ---
         code_text = self.ui.plainTextEdit_2.toPlainText().strip()
         if code_text:
-            code_font = QFont("Arial", 18)
+            code_font = QFont("Arial", 24)
             code_font.setBold(False)
             painter.setFont(code_font)
 
-            code_y = sku_y + mm_to_px(3)  # немного ниже SKU
+            code_y = sku_y + mm_to_px(3.5)  # немного ниже SKU
 
             text_width = painter.fontMetrics().horizontalAdvance(code_text)
             code_x = qr_x 
@@ -304,22 +304,34 @@ class MainWindow(QMainWindow):
         painter.end()
 
         # Предпросмотр
-#        pixmap = QPixmap.fromImage(image)
-#        self.show_label_preview(pixmap)
+        #        pixmap = QPixmap.fromImage(image)
+        #        self.show_label_preview(pixmap)
+        # --- Rotate image 90 degrees ---
+        rotated_image = image.transformed(QTransform().rotate(90), Qt.SmoothTransformation)
+
+        # --- Save to PNG file ---
+        output_path = "label_output.png"
+        if not rotated_image.save(output_path, "PNG"):
+            QMessageBox.warning(self, "Ошибка", "Не удалось сохранить изображение в файл.")
+
+        # --- Setup printer ---
         printer = QPrinter(QPrinter.HighResolution)
-        printer.setPrinterName("DYMO LabelWriter")  # при необходимости укажи точное имя принтера
-        printer.setPageSizeMM(QSizeF(31, 62))
+        printer.setPrinterName("DYMO LabelWriter")  # set your exact printer name
+        printer.setPageSizeMM(QSizeF(31, 62))       # same as image size
         printer.setFullPage(True)
-        printer.setOrientation(QPrinter.Portrait)
+        printer.setOrientation(QPrinter.Portrait)  # even with rotated image, keep Portrait
         printer.setPageMargins(0, 0, 0, 0, QPrinter.Millimeter)
 
+        # --- Start printing ---
         painter = QPainter()
         if not painter.begin(printer):
             QMessageBox.critical(self, "Ошибка", "Не удалось начать печать.")
             return
-        target_rect = printer.pageRect()  # логическая область печати
-        painter.drawImage(target_rect, image)
+
+        target_rect = printer.pageRect()  # This MUST be called AFTER painter.begin()
+        painter.drawImage(target_rect, rotated_image)
         painter.end()
+
 
     def show_label_preview(self, pixmap):
         preview = QDialog(self)
