@@ -1,43 +1,10 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QGraphicsScene, QStyleFactory, QDialog, QLabel, QVBoxLayout
-from PyQt5.QtCore import Qt, QObject, QEvent, QRectF, QSizeF
+from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
+from PyQt5.QtCore import Qt, QObject, QSizeF
 from ui_qrtag import Ui_MainWindow
 from string import ascii_uppercase
 import qrcode
-from PyQt5.QtGui import QPixmap, QImage, QPainter, QPalette, QColor, QFont, QTransform
-from PyQt5.QtPrintSupport import QPrinter, QPrintDialog
-import tempfile
-import subprocess
-from PIL import Image
-
-class DigitOnlyFilter(QObject):
-    def __init__(self, parent=None, max_length=5):
-        super().__init__(parent)
-        self.max_length = max_length
-        self.enabled = True
-
-    def eventFilter(self, obj, event):
-        if not self.enabled:
-            return False
-
-            allowed_keys = (
-                Qt.Key_Backspace, Qt.Key_Delete,
-                Qt.Key_Left, Qt.Key_Right,
-                Qt.Key_Home, Qt.Key_End,
-                Qt.Key_Tab, Qt.Key_Return, Qt.Key_Enter
-            )
-
-            if key in allowed_keys:
-                return False
-
-            if text.isdigit():
-                current_text = obj.toPlainText()
-                cursor = obj.textCursor()
-                if len(current_text) < self.max_length or cursor.hasSelection():
-                    return False
-                else:
-                    return True
-            return True
-        return False
+from PyQt5.QtGui import QPixmap, QImage, QPainter, QFont, QTransform
+from PyQt5.QtPrintSupport import QPrinter
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -53,15 +20,9 @@ class MainWindow(QMainWindow):
         self.limit_plainTextEdit_length(True)
 
         # SKU field (6 digits)
-        self.digit_filter = DigitOnlyFilter(self, max_length=6)
-        self.ui.plainTextEdit.installEventFilter(self.digit_filter)
         self.ui.plainTextEdit.textChanged.connect(self.clean_plainTextEdit)
 
         # Additional fields (5 digits each)
-        self.digit_filter_3 = DigitOnlyFilter(self, max_length=5)
-        self.digit_filter_4 = DigitOnlyFilter(self, max_length=5)
-        self.ui.plainTextEdit_3.installEventFilter(self.digit_filter_3)
-        self.ui.plainTextEdit_4.installEventFilter(self.digit_filter_4)
         self.ui.plainTextEdit_3.textChanged.connect(lambda: self.trim_text(self.ui.plainTextEdit_3, 5))
         self.ui.plainTextEdit_4.textChanged.connect(lambda: self.trim_text(self.ui.plainTextEdit_4, 5))
         # SKU toggle and input restriction
@@ -260,7 +221,7 @@ class MainWindow(QMainWindow):
                 # --- Row Cut! ---
         if self.ui.checkBox_2.isChecked():
             cut_font = QFont("Arial", 22)#--exactly text size
-            cut_font.setBold(True)
+            cut_font.setBold(False)
             painter.setFont(cut_font)
             painter.setPen(Qt.black)
 
