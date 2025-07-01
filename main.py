@@ -2,8 +2,8 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
 from PyQt5.QtCore import Qt, QObject, QSizeF
 from ui_qrtag import Ui_MainWindow
 from string import ascii_uppercase
-import qrcode
-from PyQt5.QtGui import QPixmap, QImage, QPainter, QFont, QTransform
+import qrcode, os, sys
+from PyQt5.QtGui import QPixmap, QImage, QPainter, QFont, QTransform, QIcon
 from PyQt5.QtPrintSupport import QPrinter
 
 class MainWindow(QMainWindow):
@@ -11,6 +11,17 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+
+        self.setWindowTitle("QRtag -Jewelry label generator")
+
+        # Иконка окна:
+        if getattr(sys, 'frozen', False):
+            basedir = sys._MEIPASS
+        else:
+            basedir = os.path.dirname(__file__)
+        icon_path = os.path.join(basedir, "qrtag.ico")
+        self.setWindowIcon(QIcon(icon_path))
+
         self.ui.checkBox_2.setChecked(True)
         self.super_string = ""
         # Manual mode toggle
