@@ -46,31 +46,28 @@ class MainWindow(QMainWindow):
         self.ui.setupUi(self)
         self.ui.checkBox_2.setChecked(True)
         self.super_string = ""
-        
+        # Manual mode toggle
         self.ui.checkBox_3.toggled.connect(self.on_checkbox3_toggled)
         self.ui.plainTextEdit_2.textChanged.connect(self.on_manual_text_changed)
-         # Устанавливаем начальное состояние (если чекбокс уже checked)
-        
-
         self.ui.checkBox.setChecked(True)
         self.limit_plainTextEdit_length(True)
 
-        # SKU поле (6 цифр)
+        # SKU field (6 digits)
         self.digit_filter = DigitOnlyFilter(self, max_length=6)
         self.ui.plainTextEdit.installEventFilter(self.digit_filter)
         self.ui.plainTextEdit.textChanged.connect(self.clean_plainTextEdit)
 
-        # Новые поля (5 цифр)
+        # Additional fields (5 digits each)
         self.digit_filter_3 = DigitOnlyFilter(self, max_length=5)
         self.digit_filter_4 = DigitOnlyFilter(self, max_length=5)
         self.ui.plainTextEdit_3.installEventFilter(self.digit_filter_3)
         self.ui.plainTextEdit_4.installEventFilter(self.digit_filter_4)
         self.ui.plainTextEdit_3.textChanged.connect(lambda: self.trim_text(self.ui.plainTextEdit_3, 5))
         self.ui.plainTextEdit_4.textChanged.connect(lambda: self.trim_text(self.ui.plainTextEdit_4, 5))
-
+        # SKU toggle and input restriction
         self.ui.checkBox.toggled.connect(self.on_sku_toggled)
         self.ui.plainTextEdit.textChanged.connect(self.on_plainTextEdit_changed)
-
+        # Dropdown setup for allowed letters
         self.allowed_letters = list(ascii_uppercase)
         self.ui.comboBox.setEditable(True)
         self.ui.comboBox.clear()
@@ -82,7 +79,7 @@ class MainWindow(QMainWindow):
         self.ui.comboBox.currentIndexChanged.connect(self.update_code)
         self.ui.comboBox.lineEdit().textChanged.connect(self.update_code)
 
-        # Karat
+        # Karat radio buttons
         self.ui.radioButton.toggled.connect(self.update_code)
         self.ui.radioButton_2.toggled.connect(self.update_code)
         self.ui.radioButton_6.toggled.connect(self.update_code)
@@ -90,7 +87,7 @@ class MainWindow(QMainWindow):
         self.ui.radioButton_4.toggled.connect(self.update_code)
         self.ui.radioButton_3.toggled.connect(self.update_code)
 
-        # Color
+        # Color radio buttons
         self.ui.radioButton_7.toggled.connect(self.update_code)
         self.ui.radioButton_8.toggled.connect(self.update_code)
         self.ui.radioButton_10.toggled.connect(self.update_code)
@@ -100,23 +97,24 @@ class MainWindow(QMainWindow):
         self.ui.radioButton_14.toggled.connect(self.update_code)
         self.ui.radioButton_12.toggled.connect(self.update_code)
 
-        # SKU
+        # SKU and code fields
         self.ui.plainTextEdit.textChanged.connect(self.update_code)
         self.ui.plainTextEdit_3.textChanged.connect(self.update_code)
         self.ui.plainTextEdit_4.textChanged.connect(self.update_code)
         self.ui.pushButton.clicked.connect(self.print_label)
         self.ui.actionAbout.triggered.connect(self.show_about)
         
+        # Enable second suffix field only if first is filled
         self.ui.plainTextEdit_3.textChanged.connect(self.on_plainTextEdit_3_changed)
         self.on_plainTextEdit_3_changed()
 
-         # Радиокнопки выбора принтера
-        self.ui.radioButton_15.setChecked(True)        # DYMO — выбран по умолчанию
-        self.ui.radioButton_16.setEnabled(False)       # Zebra — отображается, но неактивна
+         # Printer selection defaults
+        self.ui.radioButton_15.setChecked(True)        # DYMO selected by default
+        self.ui.radioButton_16.setEnabled(False)       # Zebra is shown but disabled
 
     
     def on_manual_text_changed(self):
-        if self.ui.checkBox_3.isChecked():  # manual включён
+        if self.ui.checkBox_3.isChecked():  
             self.super_string = self.ui.plainTextEdit_2.toPlainText().strip()
             self.update_qr_code()
     
@@ -129,7 +127,7 @@ class MainWindow(QMainWindow):
         qr = qrcode.QRCode(
             version=1,
             error_correction=qrcode.constants.ERROR_CORRECT_M,
-            box_size=12,  # увеличь для качества
+            box_size=12,  # increase for quality
             border=1,
         )
         qr.add_data(data)
@@ -143,10 +141,10 @@ class MainWindow(QMainWindow):
 
         pixmap = QPixmap.fromImage(qimg)
 
-        # Получаем размер QLabel
+        # Receiving lable size
         label_size = self.ui.label_qr.size()
 
-        # Масштабируем pixmap под размер QLabel с сохранением пропорций
+        # Scaling pixmap to QLabel size
         scaled_pixmap = pixmap.scaled(label_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
 
         self.ui.label_qr.setPixmap(scaled_pixmap)
@@ -154,12 +152,12 @@ class MainWindow(QMainWindow):
 
         
     def on_checkbox3_toggled(self, checked):
-         # Если включен — редактируемое, иначе только чтение
+         # If ebabled - editing, else read only
         self.ui.plainTextEdit_2.setReadOnly(not checked)    
         
         if checked:
             self.ui.checkBox_3.setStyleSheet("color: red;")
-            # Копируем текущее значение суперпеременной в поле для ручного редактирования,
+            # Copy ammount super variable to manual place
             text_to_copy = self.ui.plainTextEdit.toPlainText().strip()
             self.ui.plainTextEdit_2.blockSignals(True)
             self.ui.plainTextEdit_2.setPlainText(self.super_string)
@@ -168,7 +166,7 @@ class MainWindow(QMainWindow):
             self.ui.plainTextEdit.clear()
             self.ui.plainTextEdit.blockSignals(False)
 
-        # Обновляем super_string и QR код (на всякий случай)
+            # Renew super_string and QR code
             self.super_string = self.ui.plainTextEdit_2.toPlainText().strip()
             self.update_qr_code()
         else:
@@ -204,20 +202,20 @@ class MainWindow(QMainWindow):
             widget.setTextCursor(cursor)
 
     def print_label(self):
-        # Проверяем, выбран ли DYMO радиобокс
+        # Checking is enable DYMO checkbox
         if self.ui.radioButton_15.isChecked():
             self.print_label_dymo()
         else:
-            QMessageBox.information(self, "Печать", "Печать для выбранного принтера пока не реализована.")
+            QMessageBox.information(self, "Print", "Print for this printer not available yet.")
 
     def print_label_dymo(self):
         if not self.super_string.strip():
-            QMessageBox.warning(self, "Ошибка", "Пожалуйста, заполните поле Item Code перед печатью.")
+            QMessageBox.warning(self, "Error", "Please enter Item Code place before printing")
             return
-        dpi = 300  # для DYMO
+        dpi = 300  # Dpi for DYMO
         mm_to_px = lambda mm: int((mm / 25.4) * dpi)
 
-        width_mm, height_mm = 62, 31  # альбом
+        width_mm, height_mm = 62, 31  # Landscape (62x31mm)
         width_px = mm_to_px(width_mm)
         height_px = mm_to_px(height_mm)
 
@@ -237,7 +235,7 @@ class MainWindow(QMainWindow):
         qr.make(fit=True)
         matrix = qr.get_matrix()
 
-        qr_size_mm = 10
+        qr_size_mm = 10 #QR size
         qr_size_px = mm_to_px(qr_size_mm)
         cell_size = qr_size_px // len(matrix)
 
@@ -253,66 +251,91 @@ class MainWindow(QMainWindow):
                     qp.drawRect(x * cell_size, y * cell_size, cell_size, cell_size)
         qp.end()
 
-        # Отрисовать QR в (3мм, 3мм)
-        qr_x = mm_to_px(2)#--to right
-        qr_y = mm_to_px(6.5)#--to down
-        sku_y = qr_y + qr_size_px  # дефолтное значение, если SKU нет
+        # Creating QR в (10mm, 10mm)
+        qr_x = mm_to_px(2)#--align to right
+        qr_y = mm_to_px(6.5)#--align to down
+        sku_y = qr_y + qr_size_px  # default, if no SKU
         painter.drawImage(qr_x, qr_y, qr_img)
 
-                # --- Надпись Cut! ---
+                # --- Row Cut! ---
         if self.ui.checkBox_2.isChecked():
-            cut_font = QFont("Arial", 22)#--exactly size
+            cut_font = QFont("Arial", 22)#--exactly text size
             cut_font.setBold(True)
             painter.setFont(cut_font)
             painter.setPen(Qt.black)
 
             cut_lines = ["Cut!", "Do", "NOT", "pull!"]
-            line_spacing = mm_to_px(2.5)  # расстояние между строками
-            base_x = qr_x + qr_size_px + mm_to_px(0)  # немного правее от QR
+            line_spacing = mm_to_px(2.5)  # distance between rows
+            base_x = qr_x + qr_size_px + mm_to_px(0)  # right of QR
             base_y = qr_y + qr_size_px + mm_to_px(-8.5)
 
             for i, line in enumerate(cut_lines):
                 painter.drawText(base_x, base_y + i * line_spacing, line)
 
-        # --- SKU ниже QR ---
+        # --- SKU below QR ---
         sku_text = self.ui.plainTextEdit.toPlainText().strip()
         if sku_text:
             sku_font = QFont("Arial", 32)
             sku_font.setBold(False)
             painter.setFont(sku_font)
             
-            sku_x = qr_x  # на том же уровне по X, что и QR
-            sku_y = qr_y + qr_size_px + mm_to_px(5)  # немного ниже QR
+            sku_x = qr_x  # X the same level with QR
+            sku_y = qr_y + qr_size_px + mm_to_px(5)  # below QR
             
             sku_text = self.ui.plainTextEdit.toPlainText().strip()
             painter.drawText(sku_x, sku_y, sku_text)
 
-        # --- Содержимое textEdit_2 (сгенерированная строка) ---
+        # --- textEdit_2 (generated row) ---
         code_text = self.ui.plainTextEdit_2.toPlainText().strip()
         if code_text:
             code_font = QFont("Arial", 24)
             code_font.setBold(False)
             painter.setFont(code_font)
 
-            code_y = sku_y + mm_to_px(3.5)  # немного ниже SKU
+            code_y = sku_y + mm_to_px(3.5)  # below SKU
 
             text_width = painter.fontMetrics().horizontalAdvance(code_text)
             code_x = qr_x 
 
             painter.drawText(code_x, code_y, code_text)
 
+                # --- IF checkbox LAB is enabled — print "LAB" below second row ---
+        if self.ui.checkBox_4.isChecked():
+            lab_text = "LAB"
+
+            # Font setting
+            lab_font = QFont("Arial", 22)
+            lab_font.setBold(False)
+            painter.setFont(lab_font)
+            painter.setPen(Qt.black)
+
+            # Text coordinates
+            lab_y = code_y + mm_to_px(3)  # below of second row
+            lab_x = qr_x + mm_to_px(1)
+
+            # Receiving length and width of text
+            metrics = painter.fontMetrics()
+            text_width = metrics.horizontalAdvance(lab_text)
+            text_height = metrics.height()
+
+            padding = mm_to_px(0.5)  # inside align frame
+            rect_x = lab_x - padding
+            rect_y = lab_y - text_height + metrics.descent() - padding // 2
+            rect_width = text_width + 2 * padding
+            rect_height = text_height + padding
+
+            # Painting frame with round corners
+            pen = painter.pen()
+            pen.setWidth(2)  # thick of line
+            painter.setPen(pen)
+            painter.drawRoundedRect(rect_x, rect_y, rect_width, rect_height, 5, 5)
+
+            # Painting text over frame
+            painter.drawText(lab_x, lab_y, lab_text)
+
         painter.end()
 
-        # Предпросмотр
-        #        pixmap = QPixmap.fromImage(image)
-        #        self.show_label_preview(pixmap)
-        # --- Rotate image 90 degrees ---
         rotated_image = image.transformed(QTransform().rotate(90), Qt.SmoothTransformation)
-
-        # --- Save to PNG file ---
-        output_path = "label_output.png"
-        if not rotated_image.save(output_path, "PNG"):
-            QMessageBox.warning(self, "Ошибка", "Не удалось сохранить изображение в файл.")
 
         # --- Setup printer ---
         printer = QPrinter(QPrinter.HighResolution)
@@ -325,30 +348,12 @@ class MainWindow(QMainWindow):
         # --- Start printing ---
         painter = QPainter()
         if not painter.begin(printer):
-            QMessageBox.critical(self, "Ошибка", "Не удалось начать печать.")
+            QMessageBox.critical(self, "Error", "Cannot start printing")
             return
 
         target_rect = printer.pageRect()  # This MUST be called AFTER painter.begin()
         painter.drawImage(target_rect, rotated_image)
         painter.end()
-
-
-    def show_label_preview(self, pixmap):
-        preview = QDialog(self)
-        preview.setWindowTitle("Предпросмотр этикетки")
-        preview.setModal(False)
-        preview.setAttribute(Qt.WA_DeleteOnClose)
-        preview.resize(pixmap.width() + 20, pixmap.height() + 20)
-
-        layout = QVBoxLayout()
-        label = QLabel()
-        label.setPixmap(pixmap)
-        label.setAlignment(Qt.AlignCenter)
-        layout.addWidget(label)
-
-        preview.setLayout(layout)
-        preview.show()
-
     
     def update_code(self):
         if self.ui.radioButton.isChecked():
@@ -401,7 +406,7 @@ class MainWindow(QMainWindow):
         self.ui.plainTextEdit_2.setPlainText(result)
         
         
-        # Формируем суперстроку: SKU / результат
+        # Create superrow: SKU / result
         sku = self.ui.plainTextEdit.toPlainText().strip()
         self.super_string = f"{sku}/{result}" if sku else result
 
