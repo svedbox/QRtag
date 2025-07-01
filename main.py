@@ -4,7 +4,7 @@ from ui_qrtag import Ui_MainWindow
 from string import ascii_uppercase
 import qrcode, os, sys
 from PyQt5.QtGui import QPixmap, QImage, QPainter, QFont, QTransform, QIcon
-from PyQt5.QtPrintSupport import QPrinter
+from PyQt5.QtPrintSupport import QPrinter, QPrinterInfo
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -310,11 +310,20 @@ class MainWindow(QMainWindow):
         rotated_image = image.transformed(QTransform().rotate(90), Qt.SmoothTransformation)
 
         # --- Setup printer ---
-        printer = QPrinter(QPrinter.HighResolution)
-        printer.setPrinterName("DYMO LabelWriter")  # set your exact printer name
-        printer.setPageSizeMM(QSizeF(31, 62))       # same as image size
+        dymo_printer_info = None
+        for p in QPrinterInfo.availablePrinters():
+            if "DYMO" in p.printerName().upper():
+                dymo_printer_info = p
+                break
+
+        if not dymo_printer_info:
+            QMessageBox.critical(self, "Error", "DYMO printer is not found!")
+            return
+
+        printer = QPrinter(dymo_printer_info)
+        printer.setPageSizeMM(QSizeF(31, 62))
         printer.setFullPage(True)
-        printer.setOrientation(QPrinter.Portrait)  # even with rotated image, keep Portrait
+        printer.setOrientation(QPrinter.Portrait)
         printer.setPageMargins(0, 0, 0, 0, QPrinter.Millimeter)
 
         # --- Start printing ---
