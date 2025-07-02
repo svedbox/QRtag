@@ -14,7 +14,7 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle("QRtag -Jewelry label generator")
 
-        # Иконка окна:
+        # Window icon:
         if getattr(sys, 'frozen', False):
             basedir = sys._MEIPASS
         else:
@@ -151,7 +151,7 @@ class MainWindow(QMainWindow):
 
     def clean_plainTextEdit(self):
         text = self.ui.plainTextEdit.toPlainText()
-        filtered = ''.join(c for c in text if c in "0123456789")
+        filtered = ''.join(c for c in text.upper() if c.isalnum())
         if text != filtered:
             cursor = self.ui.plainTextEdit.textCursor()
             pos = cursor.position()
