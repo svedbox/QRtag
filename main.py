@@ -163,14 +163,28 @@ class MainWindow(QMainWindow):
 
     def trim_text(self, widget, max_length):
         text = widget.toPlainText()
-        filtered = ''.join(c for c in text if c.isdigit())[:max_length]
-        if text != filtered:
+        allowed_chars = "0123456789."
+        result = ""
+        dot_seen = False
+
+        for c in text:
+            if c not in allowed_chars:
+                continue
+            if c == ".":
+                if dot_seen:
+                    continue  # вторая точка — игнорируем
+                dot_seen = True
+            result += c
+            if len(result) >= max_length:
+                break
+
+        if text != result:
             cursor = widget.textCursor()
             pos = cursor.position()
             widget.blockSignals(True)
-            widget.setPlainText(filtered)
+            widget.setPlainText(result)
             widget.blockSignals(False)
-            cursor.setPosition(min(pos, len(filtered)))
+            cursor.setPosition(min(pos, len(result)))
             widget.setTextCursor(cursor)
 
     def print_label(self):
