@@ -34,11 +34,14 @@ jobs:
     - name: Bump patch version
       id: bump
       run: |
-        IFS='.' read -r major minor patch <<<"${{ steps.get_version.outputs.version#v }}"
+        raw_version="${{ steps.get_version.outputs.version }}"
+        version_no_v="${raw_version#v}"
+        IFS='.' read -r major minor patch <<<"$version_no_v"
         patch=$((patch + 1))
         new_version="v$major.$minor.$patch"
         echo "$new_version" > version.txt
         echo "new_version=$new_version" >> "$GITHUB_OUTPUT"
+
 
     - name: Commit and push version.txt (if changed)
       id: commit
