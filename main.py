@@ -84,6 +84,13 @@ class MainWindow(QMainWindow):
         self.ui.radioButton_15.setChecked(True)        # DYMO selected by default
         self.ui.radioButton_16.setEnabled(False)       # Zebra is shown but disabled
 
+    def get_version(self):
+        try:
+            with open("version.txt", "r") as f:
+                return f.read().strip()
+        except Exception:
+            return "Unknown"
+
     def clear_color_selection(self):
         for btn in [
             self.ui.radioButton_7, self.ui.radioButton_8, self.ui.radioButton_10, self.ui.radioButton_9,
@@ -462,13 +469,14 @@ class MainWindow(QMainWindow):
                 self.ui.plainTextEdit.setTextCursor(cursor)
 
     def show_about(self):
+        version = self.get_version()
         about_box = QMessageBox(self)
         about_box.setWindowFlags(about_box.windowFlags() | Qt.Window)
         about_box.setWindowTitle("About")
         about_box.setTextFormat(Qt.RichText)
         about_box.setText(
             "<b>QR Tag Generator</b><br>"
-            "Version: 1.0.0<br><br>"
+            f"Version: {version}<br><br>"
             "<b>Developer:</b> Sergey Vedmetskiy<br>"
             "<b>Assistant Developer:</b> Viktoriya Yevsyukova<br><br>"
             "License: GNU AGPL v3.0<br>"
