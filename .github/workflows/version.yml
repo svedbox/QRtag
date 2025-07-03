@@ -34,13 +34,28 @@ jobs:
     - name: Bump patch version
       id: bump
       run: |
+        set -e
+        set -x
+
         raw_version="${{ steps.get_version.outputs.version }}"
         version_no_v="${raw_version#v}"
-        IFS='.' read -r major minor patch <<<"$version_no_v"
+
+        echo "Parsed version: $version_no_v"
+
+        # Разбить по точкам
+        IFS='.' read -r major minor patch <<<"$version_no_v" || {
+          echo "Invalid version format: $version_no_v"
+          exit 1
+        }
+
         patch=$((patch + 1))
         new_version="v$major.$minor.$patch"
+
+        echo "New version: $new_version"
         echo "$new_version" > version.txt
+
         echo "new_version=$new_version" >> "$GITHUB_OUTPUT"
+
 
 
     - name: Commit and push version.txt (if changed)
