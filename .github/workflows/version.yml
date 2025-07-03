@@ -34,6 +34,7 @@ jobs:
         echo "Current version: $version"
         echo "version=$version" >> "$GITHUB_OUTPUT"
 
+
     - name: Bump patch version
       id: bump
       run: |
