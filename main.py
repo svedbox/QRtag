@@ -188,7 +188,7 @@ class MainWindow(QMainWindow):
                 continue
             if c == ".":
                 if dot_seen:
-                    continue  # вторая точка — игнорируем
+                    continue  # second point - ignore
                 dot_seen = True
             result += c
             if len(result) >= max_length:

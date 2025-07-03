@@ -1,0 +1,53 @@
+name: Auto Version and Commit
+
+on:
+  push:
+    branches:
+      - main  # или твоя основная ветка
+
+jobs:
+  versioning:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+      with:
+        persist-credentials: true  # нужно, чтобы сделать commit
+
+    - name: Set up Git
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+
+    - name: Get latest tag or version from file
+      id: get_version
+      run: |
+        if [ -f version.txt ]; then
+          version=$(cat version.txt)
+        else
+          version="v0.0.0"
+        fi
+        echo "Current version: $version"
+        echo "version=$version" >> "$GITHUB_OUTPUT"
+
+    - name: Bump patch version
+      id: bump_version
+      run: |
+        IFS='.' read -r major minor patch <<<"${{ steps.get_version.outputs.version#v }}"
+        patch=$((patch + 1))
+        new_version="v$major.$minor.$patch"
+        echo "$new_version" > version.txt
+        echo "New version: $new_version"
+        echo "new_version=$new_version" >> "$GITHUB_OUTPUT"
+
+    - name: Commit and push version.txt
+      run: |
+        git add version.txt
+        git commit -m "Bump version to ${{ steps.bump_version.outputs.new_version }}"
+        git push
+
+    - name: Create Git Tag
+      run: |
+        git tag ${{ steps.bump_version.outputs.new_version }}
+        git push origin ${{ steps.bump_version.outputs.new_version }}
