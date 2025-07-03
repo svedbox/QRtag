@@ -20,16 +20,19 @@ jobs:
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
 
-    - name: Get latest version from file or default
+    - name: Get latest version from file or last tag
       id: get_version
       run: |
         if [ -f version.txt ]; then
           version=$(cat version.txt)
         else
-          version="v0.0.0"
+          version=$(git tag --sort=-v:refname | head -n 1)
+          if [ -z "$version" ]; then
+            version="v0.0.0"
+          fi
         fi
-        echo "Current version: $version"
-        echo "version=$version" >> "$GITHUB_OUTPUT"
+    echo "Current version: $version"
+    echo "version=$version" >> "$GITHUB_OUTPUT"
 
     - name: Bump patch version
       id: bump
