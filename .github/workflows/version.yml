@@ -69,6 +69,7 @@ jobs:
         else
           echo "No changes to commit"
           echo "committed=false" >> "$GITHUB_OUTPUT"
+        fi
 
     - name: Create Git Tag (if committed)
       if: steps.commit.outputs.committed == 'true'
