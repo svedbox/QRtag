@@ -6,6 +6,18 @@ import qrcode, os, sys
 from PyQt5.QtGui import QPixmap, QImage, QPainter, QFont, QTransform, QIcon
 from PyQt5.QtPrintSupport import QPrinter, QPrinterInfo
 
+def resource_path(filename):
+    if getattr(sys, 'frozen', False):
+        base_path = sys._MEIPASS
+    else:
+        base_path = os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(base_path, filename)
+try:
+    with open(resource_path("version.txt"), "r", encoding="utf-8") as f:
+        app_version = f.read().strip()
+except Exception:
+    app_version = "unknown"
+print("== Version loaded:", app_version)
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -469,14 +481,14 @@ class MainWindow(QMainWindow):
                 self.ui.plainTextEdit.setTextCursor(cursor)
 
     def show_about(self):
-        version = self.get_version()
+        global app_version
         about_box = QMessageBox(self)
         about_box.setWindowFlags(about_box.windowFlags() | Qt.Window)
         about_box.setWindowTitle("About")
         about_box.setTextFormat(Qt.RichText)
         about_box.setText(
             "<b>QR Tag Generator</b><br>"
-            f"Version: {version}<br><br>"
+            f"Version: {app_version}<br><br>"
             "<b>Developer:</b> Sergey Vedmetskiy<br>"
             "<b>Assistant Developer:</b> Viktoriya Yevsyukova<br><br>"
             "License: GNU AGPL v3.0<br>"
