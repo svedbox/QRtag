@@ -84,6 +84,22 @@ class MainWindow(QMainWindow):
         self.ui.radioButton_15.setChecked(True)        # DYMO selected by default
         self.ui.radioButton_16.setEnabled(False)       # Zebra is shown but disabled
 
+    def clear_color_selection(self):
+        for btn in [
+            self.ui.radioButton_7, self.ui.radioButton_8, self.ui.radioButton_10, self.ui.radioButton_9,
+            self.ui.radioButton_11, self.ui.radioButton_13, self.ui.radioButton_14, self.ui.radioButton_12
+        ]:
+            btn.setAutoExclusive(False)
+            btn.setChecked(False)
+            btn.setAutoExclusive(True)
+
+    def set_color_buttons_enabled(self, enabled):
+        for btn in [
+            self.ui.radioButton_7, self.ui.radioButton_8, self.ui.radioButton_10, self.ui.radioButton_9,
+            self.ui.radioButton_11, self.ui.radioButton_13, self.ui.radioButton_14, self.ui.radioButton_12
+        ]:
+            btn.setEnabled(enabled)
+
     
     def on_manual_text_changed(self):
         if self.ui.checkBox_3.isChecked():  
@@ -365,6 +381,15 @@ class MainWindow(QMainWindow):
             grade = "ST"
         else:
             grade = ""
+            
+        # Check if one of special metals selected
+        if self.ui.radioButton_3.isChecked() or self.ui.radioButton_4.isChecked() or self.ui.radioButton_5.isChecked():
+            self.clear_color_selection()
+            self.set_color_buttons_enabled(False)
+            color = ""
+        else:
+            self.set_color_buttons_enabled(True)
+    
 
         if self.ui.radioButton_7.isChecked():
             color = "YE"
