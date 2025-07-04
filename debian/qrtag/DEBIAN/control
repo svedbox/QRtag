@@ -1,0 +1,11 @@
+Package: qrtag
+Version: 1.1.0
+Architecture: all
+Maintainer: Sergey Vedmetskiy
+Installed-Size: 572
+Depends: python3:any, python3-pyqt5, python3-qrcode
+Section: utils
+Priority: optional
+Homepage: https://github.com/svedbox/QRtag
+Description: QR Jewelry label tag generator
+ A simple graphical program for generating and printing QR codes.

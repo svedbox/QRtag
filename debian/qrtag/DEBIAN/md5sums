@@ -1,0 +1,8 @@
+d910fae68b0e66f84520e2c066468516  usr/share/applications/QRtag.desktop
+e3bdb91e39ff65587465c99d05c36053  usr/share/doc/qrtag/changelog.gz
+fdf8b02005c004736dc0f5b23e34414c  usr/share/icons/hicolor/512x512/apps/qrtag.png
+524880b73d0a156426dfd7fa8c42a55c  usr/share/python3/runtime.d/qrtag.rtupdate
+2b2ca0154f4376d520f97ee1e28029a9  usr/share/qrtag/main.py
+fdf8b02005c004736dc0f5b23e34414c  usr/share/qrtag/resources/qrtag.png
+2c70acf058c2c1f217c89caa691cf85e  usr/share/qrtag/ui_qrtag.py
+de26771e214089c24907bafc5d782f7b  usr/share/qrtag/version.txt

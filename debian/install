@@ -1,0 +1,6 @@
+main.py usr/share/qrtag/
+ui_qrtag.py usr/share/qrtag/
+resources/* usr/share/qrtag/resources/
+QRtag.desktop usr/share/applications/
+resources/qrtag.png usr/share/icons/hicolor/512x512/apps/
+version.txt usr/share/qrtag/
