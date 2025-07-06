@@ -1,10 +1,12 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
-from PyQt5.QtCore import Qt, QObject, QSizeF
+from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QStyleFactory
+from PyQt6.QtCore import Qt, QObject, QSizeF
 from ui_qrtag import Ui_MainWindow
 from string import ascii_uppercase
 import qrcode, os, sys
-from PyQt5.QtGui import QPixmap, QImage, QPainter, QFont, QTransform, QIcon
-from PyQt5.QtPrintSupport import QPrinter, QPrinterInfo
+from PyQt6.QtGui import QPixmap, QImage, QPainter, QFont, QTransform, QIcon
+from PyQt6.QtPrintSupport import QPrinter, QPrinterInfo
+
+
 
 def resource_path(filename):
     if getattr(sys, 'frozen', False):
@@ -144,7 +146,7 @@ class MainWindow(QMainWindow):
 
         # PIL Image -> QByteArray -> QImage
         img_data = img.tobytes("raw", "RGB")
-        qimg = QImage(img_data, img.size[0], img.size[1], QImage.Format_RGB888)
+        qimg = QImage(img_data, img.size[0], img.size[1], QImage.Format.Format_RGB888)
 
         pixmap = QPixmap.fromImage(qimg)
 
@@ -152,10 +154,10 @@ class MainWindow(QMainWindow):
         label_size = self.ui.label_qr.size()
 
         # Scaling pixmap to QLabel size
-        scaled_pixmap = pixmap.scaled(label_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        scaled_pixmap = pixmap.scaled(label_size, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
 
         self.ui.label_qr.setPixmap(scaled_pixmap)
-        self.ui.label_qr.setAlignment(Qt.AlignCenter)
+        self.ui.label_qr.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         
     def on_checkbox3_toggled(self, checked):
@@ -240,10 +242,10 @@ class MainWindow(QMainWindow):
         width_px = mm_to_px(width_mm)
         height_px = mm_to_px(height_mm)
 
-        image = QImage(width_px, height_px, QImage.Format_RGB32)
-        image.fill(Qt.white)
+        image = QImage(width_px, height_px, QImage.Format.Format_RGB32)
+        image.fill(Qt.GlobalColor.white)
         painter = QPainter(image)
-        painter.setRenderHint(QPainter.Antialiasing)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
 
         # --- QR-код ---
         qr = qrcode.QRCode(
@@ -260,11 +262,11 @@ class MainWindow(QMainWindow):
         qr_size_px = mm_to_px(qr_size_mm)
         cell_size = qr_size_px // len(matrix)
 
-        qr_img = QImage(qr_size_px, qr_size_px, QImage.Format_RGB32)
-        qr_img.fill(Qt.white)
+        qr_img = QImage(qr_size_px, qr_size_px, QImage.Format.Format_RGB32)
+        qr_img.fill(Qt.GlobalColor.white)
         qp = QPainter(qr_img)
-        qp.setPen(Qt.NoPen)
-        qp.setBrush(Qt.black)
+        qp.setPen(Qt.PenStyle.NoPen)
+        qp.setBrush(Qt.GlobalColor.black)
 
         for y, row in enumerate(matrix):
             for x, val in enumerate(row):
@@ -283,7 +285,7 @@ class MainWindow(QMainWindow):
             cut_font = QFont("Arial", 22)#--exactly text size
             cut_font.setBold(False)
             painter.setFont(cut_font)
-            painter.setPen(Qt.black)
+            painter.setPen(Qt.GlobalColor.black)
 
             cut_lines = ["Cut!", "Do", "NOT", "pull!"]
             line_spacing = mm_to_px(2.5)  # distance between rows
@@ -328,7 +330,7 @@ class MainWindow(QMainWindow):
             lab_font = QFont("Arial", 22)
             lab_font.setBold(False)
             painter.setFont(lab_font)
-            painter.setPen(Qt.black)
+            painter.setPen(Qt.GlobalColor.black)
 
             # Text coordinates
             lab_y = code_y + mm_to_px(3)  # below of second row
@@ -356,7 +358,7 @@ class MainWindow(QMainWindow):
 
         painter.end()
 
-        rotated_image = image.transformed(QTransform().rotate(90), Qt.SmoothTransformation)
+        rotated_image = image.transformed(QTransform().rotate(90), Qt.TransformationMode.SmoothTransformation)
 
         # --- Setup printer ---
         dymo_printer_info = None
@@ -372,8 +374,8 @@ class MainWindow(QMainWindow):
         printer = QPrinter(dymo_printer_info)
         printer.setPageSizeMM(QSizeF(31, 62))
         printer.setFullPage(True)
-        printer.setOrientation(QPrinter.Portrait)
-        printer.setPageMargins(0, 0, 0, 0, QPrinter.Millimeter)
+        printer.setOrientation(QPrinter.Orientation.Portrait)
+        printer.setPageMargins(0, 0, 0, 0, QPrinter.Unit.Millimeter)
 
         # --- Start printing ---
         painter = QPainter()
@@ -483,9 +485,9 @@ class MainWindow(QMainWindow):
     def show_about(self):
         global app_version
         about_box = QMessageBox(self)
-        about_box.setWindowFlags(about_box.windowFlags() | Qt.Window)
+        about_box.setWindowFlags(about_box.windowFlags() | Qt.WindowType.Window)
         about_box.setWindowTitle("About")
-        about_box.setTextFormat(Qt.RichText)
+        about_box.setTextFormat(Qt.TextFormat.RichText)
         about_box.setText(
             "<b>QR Tag Generator</b><br>"
             f"Version: {app_version}<br><br>"
@@ -496,12 +498,12 @@ class MainWindow(QMainWindow):
             "Use at your own risk.<br><br>"
             "© 2025 Sergey Vedmetskiy"
         )
-        about_box.setIcon(QMessageBox.Information)
-        about_box.exec_()
+        about_box.setIcon(QMessageBox.Icon.Information)
+        about_box.exec()
 
 if __name__ == "__main__":
     app = QApplication([])
     window = MainWindow()
     window.show()
-    app.exec_()
+    app.exec()
     
