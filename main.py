@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import qrcode, os, sys, platform
 os.environ["QT_QPA_PLATFORM"] = "xcb"
 from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QStyleFactory

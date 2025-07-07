@@ -3,11 +3,11 @@ Section: utils
 Priority: optional
 Maintainer: Sergey Vedmetskiy 
 Build-Depends: debhelper-compat (= 13), dh-python, python3-all
-Standards-Version: 1.1.0
+Standards-Version: 1.1.6
 Homepage: https://github.com/svedbox/QRtag
 
 Package: qrtag
 Architecture: all
-Depends: ${misc:Depends}, ${python3:Depends}, python3-pyqt5, python3-qrcode
+Depends: ${misc:Depends}, ${python3:Depends}, python3-pyqt6, python3-qrcode
 Description: QR Jewelry label tag generator
  A simple graphical program for generating and printing QR codes. 
