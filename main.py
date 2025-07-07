@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 import qrcode, os, sys, platform
-os.environ["QT_QPA_PLATFORM"] = "xcb"
+#os.environ["QT_QPA_PLATFORM"] = "xcb"
 from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QStyleFactory
-from PyQt6.QtCore import Qt, QObject, QSizeF
+from PyQt6.QtCore import Qt, QObject, QSizeF, QMarginsF
 from ui_qrtag import Ui_MainWindow
 from string import ascii_uppercase
-from PyQt6.QtGui import QPixmap, QImage, QPainter, QFont, QTransform, QIcon
+from PyQt6.QtGui import QPixmap, QImage, QPainter, QFont, QTransform, QIcon, QPageSize, QPageLayout
 from PyQt6.QtPrintSupport import QPrinter, QPrinterInfo
 
 system = platform.system()
@@ -374,10 +374,11 @@ class MainWindow(QMainWindow):
             return
 
         printer = QPrinter(dymo_printer_info)
-        printer.setPageSizeMM(QSizeF(31, 62))
+        printer.setResolution(dpi)
+        printer.setPageSize(QPageSize(QSizeF(31, 62), QPageSize.Unit.Millimeter))
         printer.setFullPage(True)
-        printer.setOrientation(QPrinter.Orientation.Portrait)
-        printer.setPageMargins(0, 0, 0, 0, QPrinter.Unit.Millimeter)
+        printer.setPageOrientation(QPageLayout.Orientation.Portrait)
+        printer.setPageMargins(QMarginsF(0, 0, 0, 0), QPageLayout.Unit.Millimeter)
 
         # --- Start printing ---
         painter = QPainter()
@@ -385,8 +386,8 @@ class MainWindow(QMainWindow):
             QMessageBox.critical(self, "Error", "Cannot start printing")
             return
 
-        target_rect = printer.pageRect()  # This MUST be called AFTER painter.begin()
-        painter.drawImage(target_rect, rotated_image)
+        target_rect = printer.pageRect(QPrinter.Unit.Millimeter)
+        painter.drawImage(-10, 0, rotated_image)
         painter.end()
     
     def update_code(self):
@@ -505,18 +506,7 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication([])
-    if system == "Windows":
-        if "WindowsVista" in QStyleFactory.keys():
-            app.setStyle(QStyleFactory.create("WindowsVista"))
-        else:
-            app.setStyle(QStyleFactory.create("Windows"))  # fallback
-    elif system == "Linux":
-        app.setStyle(QStyleFactory.create("Fusion"))
-    elif system == "Darwin":  # macOS
-        app.setStyle(QStyleFactory.create("Macintosh"))
-    else:
-        app.setStyle(QStyleFactory.create("Fusion"))  # безопасный дефолт
-
+    app.setStyle(QStyleFactory.create("Fusion"))  # fallback
     window = MainWindow()
     window.show()
     app.exec()
