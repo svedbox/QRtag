@@ -1,12 +1,13 @@
+import qrcode, os, sys, platform
+os.environ["QT_QPA_PLATFORM"] = "xcb"
 from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QStyleFactory
 from PyQt6.QtCore import Qt, QObject, QSizeF
 from ui_qrtag import Ui_MainWindow
 from string import ascii_uppercase
-import qrcode, os, sys
 from PyQt6.QtGui import QPixmap, QImage, QPainter, QFont, QTransform, QIcon
 from PyQt6.QtPrintSupport import QPrinter, QPrinterInfo
 
-
+system = platform.system()
 
 def resource_path(filename):
     if getattr(sys, 'frozen', False):
@@ -503,6 +504,18 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication([])
+    if system == "Windows":
+        if "WindowsVista" in QStyleFactory.keys():
+            app.setStyle(QStyleFactory.create("WindowsVista"))
+        else:
+            app.setStyle(QStyleFactory.create("Windows"))  # fallback
+    elif system == "Linux":
+        app.setStyle(QStyleFactory.create("Fusion"))
+    elif system == "Darwin":  # macOS
+        app.setStyle(QStyleFactory.create("Macintosh"))
+    else:
+        app.setStyle(QStyleFactory.create("Fusion"))  # безопасный дефолт
+
     window = MainWindow()
     window.show()
     app.exec()
