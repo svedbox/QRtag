@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import qrcode, os, sys, platform
-#os.environ["QT_QPA_PLATFORM"] = "xcb"
-from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QStyleFactory
+os.environ["QT_QPA_PLATFORM"] = "xcb"
+from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QStyleFactory, QDialog, QVBoxLayout, QLabel, QPushButton
 from PyQt6.QtCore import Qt, QObject, QSizeF, QMarginsF
 from ui_qrtag import Ui_MainWindow
 from string import ascii_uppercase
@@ -9,6 +9,8 @@ from PyQt6.QtGui import QPixmap, QImage, QPainter, QFont, QTransform, QIcon, QPa
 from PyQt6.QtPrintSupport import QPrinter, QPrinterInfo
 
 system = platform.system()
+tray_icon_path = "/usr/share/icons/hicolor/512x512/apps/qrtag.png"
+
 
 def resource_path(filename):
     if getattr(sys, 'frozen', False):
@@ -485,24 +487,43 @@ class MainWindow(QMainWindow):
                 cursor.setPosition(min(pos, 6))
                 self.ui.plainTextEdit.setTextCursor(cursor)
 
-    def show_about(self):
+    def show_about(self, *_):
         global app_version
-        about_box = QMessageBox(self)
-        about_box.setWindowFlags(about_box.windowFlags() | Qt.WindowType.Window)
-        about_box.setWindowTitle("About")
-        about_box.setTextFormat(Qt.TextFormat.RichText)
-        about_box.setText(
-            "<b>QR Tag Generator</b><br>"
+
+        dialog = QDialog(self)
+        dialog.setWindowTitle("About")
+        dialog.setWindowModality(Qt.WindowModality.ApplicationModal)
+        dialog.setFixedSize(400, 320)
+
+        layout = QVBoxLayout(dialog)
+
+        label = QLabel(dialog)
+        label.setTextFormat(Qt.TextFormat.RichText)
+        label.setTextInteractionFlags(Qt.TextInteractionFlag.TextBrowserInteraction)
+        label.setOpenExternalLinks(True)
+        label.setWordWrap(True)
+
+        label.setText(
+            "<b>QRtag</b><br>"
             f"Version: {app_version}<br><br>"
             "<b>Developer:</b> Sergey Vedmetskiy<br>"
+            "<br></br>"
             "<b>Assistant Developer:</b> Viktoriya Yevsyukova<br><br>"
             "License: GNU AGPL v3.0<br>"
             "<i>This software is provided without any warranty.</i><br>"
             "Use at your own risk.<br><br>"
-            "© 2025 Sergey Vedmetskiy"
+            "© 2025 Sergey Vedmetskiy<br><br>"
+            '<a href="https://github.com/svedbox/QRtag">https://github.com/svedbox/QRtag</a>'
         )
-        about_box.setIcon(QMessageBox.Icon.Information)
-        about_box.exec()
+
+        layout.addWidget(label)
+
+        button = QPushButton("OK", dialog)
+        button.clicked.connect(dialog.accept)
+        layout.addWidget(button, alignment=Qt.AlignmentFlag.AlignCenter)
+
+        dialog.exec()
+
 
 if __name__ == "__main__":
     app = QApplication([])

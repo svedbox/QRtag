@@ -3,7 +3,7 @@ Section: utils
 Priority: optional
 Maintainer: Sergey Vedmetskiy 
 Build-Depends: debhelper-compat (= 13), dh-python, python3-all
-Standards-Version: 1.1.6
+Standards-Version: 1.1.8
 Homepage: https://github.com/svedbox/QRtag
 
 Package: qrtag

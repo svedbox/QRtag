@@ -1,7 +1,10 @@
 [Desktop Entry]
 Name=QR Tag Generator
-Exec=python3 /usr/share/qrtag/main.py
+Comment=QRtag
+Exec=/usr/share/qrtag/main.py
 Icon=qrtag
 Terminal=false
 Type=Application
 Categories=Utility;
+StartupNotify=true
+StartupWMClass=main.py
