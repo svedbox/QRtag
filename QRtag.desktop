@@ -1,5 +1,5 @@
 [Desktop Entry]
-Name=QR Tag Generator
+Name=QRtag
 Comment=QRtag
 Exec=/usr/share/qrtag/main.py
 Icon=qrtag

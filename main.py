@@ -30,7 +30,7 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
-        self.setWindowTitle("QRtag -Jewelry label generator")
+        self.setWindowTitle("QRtag -Jewelry label tag generator")
 
         # Window icon:
         if getattr(sys, 'frozen', False):

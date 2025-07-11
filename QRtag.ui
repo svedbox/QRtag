@@ -6,26 +6,26 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>728</width>
-    <height>630</height>
+    <width>610</width>
+    <height>456</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>728</width>
-    <height>630</height>
+    <width>610</width>
+    <height>456</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>728</width>
-    <height>630</height>
+    <width>610</width>
+    <height>456</height>
    </size>
   </property>
   <property name="font">
    <font>
     <family>Arial</family>
-    <pointsize>13</pointsize>
+    <pointsize>10</pointsize>
     <italic>false</italic>
    </font>
   </property>
@@ -39,16 +39,16 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>520</x>
-      <y>60</y>
-      <width>121</width>
+      <x>480</x>
+      <y>30</y>
+      <width>71</width>
       <height>31</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>Arial</family>
-      <pointsize>13</pointsize>
+      <pointsize>10</pointsize>
       <italic>false</italic>
      </font>
     </property>
@@ -62,13 +62,13 @@
       <x>70</x>
       <y>0</y>
       <width>111</width>
-      <height>31</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>Arial</family>
-      <pointsize>13</pointsize>
+      <pointsize>10</pointsize>
       <italic>false</italic>
      </font>
     </property>
@@ -80,15 +80,15 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>30</y>
-      <width>251</width>
-      <height>31</height>
+      <y>20</y>
+      <width>181</width>
+      <height>21</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>Arial</family>
-      <pointsize>13</pointsize>
+      <pointsize>10</pointsize>
       <italic>false</italic>
      </font>
     </property>
@@ -96,8 +96,8 @@
    <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
-      <x>270</x>
-      <y>20</y>
+      <x>210</x>
+      <y>0</y>
       <width>21</width>
       <height>51</height>
      </rect>
@@ -105,7 +105,7 @@
     <property name="font">
      <font>
       <family>Arial</family>
-      <pointsize>28</pointsize>
+      <pointsize>10</pointsize>
       <italic>false</italic>
      </font>
     </property>
@@ -116,16 +116,16 @@
    <widget class="QPlainTextEdit" name="plainTextEdit_2">
     <property name="geometry">
      <rect>
-      <x>290</x>
-      <y>30</y>
-      <width>281</width>
-      <height>31</height>
+      <x>220</x>
+      <y>20</y>
+      <width>171</width>
+      <height>21</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>Arial</family>
-      <pointsize>13</pointsize>
+      <pointsize>10</pointsize>
       <italic>false</italic>
      </font>
     </property>
@@ -133,16 +133,16 @@
    <widget class="QLabel" name="label_4">
     <property name="geometry">
      <rect>
-      <x>340</x>
+      <x>260</x>
       <y>0</y>
       <width>201</width>
-      <height>31</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>Arial</family>
-      <pointsize>13</pointsize>
+      <pointsize>10</pointsize>
       <italic>false</italic>
      </font>
     </property>
@@ -154,15 +154,15 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>310</y>
+      <y>220</y>
       <width>161</width>
-      <height>81</height>
+      <height>71</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>Arial</family>
-      <pointsize>13</pointsize>
+      <pointsize>10</pointsize>
       <italic>false</italic>
      </font>
     </property>
@@ -173,7 +173,7 @@
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>40</y>
+       <y>30</y>
        <width>86</width>
        <height>27</height>
       </rect>
@@ -181,7 +181,7 @@
      <property name="font">
       <font>
        <family>Arial</family>
-       <pointsize>13</pointsize>
+       <pointsize>10</pointsize>
        <italic>false</italic>
       </font>
      </property>
@@ -321,15 +321,15 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>390</y>
+      <y>290</y>
       <width>411</width>
-      <height>101</height>
+      <height>71</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>Arial</family>
-      <pointsize>13</pointsize>
+      <pointsize>10</pointsize>
       <italic>false</italic>
      </font>
     </property>
@@ -340,15 +340,15 @@
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>50</y>
+       <y>40</y>
        <width>191</width>
-       <height>31</height>
+       <height>21</height>
       </rect>
      </property>
      <property name="font">
       <font>
        <family>Arial</family>
-       <pointsize>13</pointsize>
+       <pointsize>10</pointsize>
        <italic>false</italic>
       </font>
      </property>
@@ -357,15 +357,15 @@
      <property name="geometry">
       <rect>
        <x>230</x>
-       <y>50</y>
+       <y>40</y>
        <width>141</width>
-       <height>31</height>
+       <height>21</height>
       </rect>
      </property>
      <property name="font">
       <font>
        <family>Arial</family>
-       <pointsize>13</pointsize>
+       <pointsize>10</pointsize>
        <italic>false</italic>
       </font>
      </property>
@@ -376,13 +376,13 @@
        <x>40</x>
        <y>20</y>
        <width>161</width>
-       <height>31</height>
+       <height>21</height>
       </rect>
      </property>
      <property name="font">
       <font>
        <family>Arial</family>
-       <pointsize>13</pointsize>
+       <pointsize>10</pointsize>
        <italic>false</italic>
       </font>
      </property>
@@ -396,13 +396,13 @@
        <x>270</x>
        <y>20</y>
        <width>81</width>
-       <height>31</height>
+       <height>21</height>
       </rect>
      </property>
      <property name="font">
       <font>
        <family>Arial</family>
-       <pointsize>13</pointsize>
+       <pointsize>10</pointsize>
        <italic>false</italic>
       </font>
      </property>
@@ -415,15 +415,15 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>60</y>
+      <y>40</y>
       <width>158</width>
-      <height>254</height>
+      <height>181</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>Arial</family>
-      <pointsize>13</pointsize>
+      <pointsize>10</pointsize>
       <italic>false</italic>
      </font>
     </property>
@@ -436,7 +436,7 @@
        <property name="font">
         <font>
          <family>Arial</family>
-         <pointsize>13</pointsize>
+         <pointsize>10</pointsize>
          <italic>false</italic>
         </font>
        </property>
@@ -450,7 +450,7 @@
        <property name="font">
         <font>
          <family>Arial</family>
-         <pointsize>13</pointsize>
+         <pointsize>10</pointsize>
          <italic>false</italic>
         </font>
        </property>
@@ -464,7 +464,7 @@
        <property name="font">
         <font>
          <family>Arial</family>
-         <pointsize>13</pointsize>
+         <pointsize>10</pointsize>
          <italic>false</italic>
         </font>
        </property>
@@ -473,26 +473,12 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="0">
-      <widget class="QRadioButton" name="radioButton">
-       <property name="font">
-        <font>
-         <family>Arial</family>
-         <pointsize>13</pointsize>
-         <italic>false</italic>
-        </font>
-       </property>
-       <property name="text">
-        <string>10K</string>
-       </property>
-      </widget>
-     </item>
      <item row="6" column="0">
       <widget class="QRadioButton" name="radioButton_3">
        <property name="font">
         <font>
          <family>Arial</family>
-         <pointsize>13</pointsize>
+         <pointsize>10</pointsize>
          <italic>false</italic>
         </font>
        </property>
@@ -506,12 +492,26 @@
        <property name="font">
         <font>
          <family>Arial</family>
-         <pointsize>13</pointsize>
+         <pointsize>10</pointsize>
          <italic>false</italic>
         </font>
        </property>
        <property name="text">
         <string>18K</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QRadioButton" name="radioButton">
+       <property name="font">
+        <font>
+         <family>Arial</family>
+         <pointsize>10</pointsize>
+         <italic>false</italic>
+        </font>
+       </property>
+       <property name="text">
+        <string>10K</string>
        </property>
       </widget>
      </item>
@@ -521,15 +521,15 @@
     <property name="geometry">
      <rect>
       <x>190</x>
-      <y>60</y>
+      <y>40</y>
       <width>221</width>
-      <height>331</height>
+      <height>181</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>Arial</family>
-      <pointsize>13</pointsize>
+      <pointsize>10</pointsize>
       <italic>false</italic>
      </font>
     </property>
@@ -542,7 +542,7 @@
        <property name="font">
         <font>
          <family>Arial</family>
-         <pointsize>13</pointsize>
+         <pointsize>10</pointsize>
          <italic>false</italic>
         </font>
        </property>
@@ -556,7 +556,7 @@
        <property name="font">
         <font>
          <family>Arial</family>
-         <pointsize>13</pointsize>
+         <pointsize>10</pointsize>
          <italic>false</italic>
         </font>
        </property>
@@ -570,7 +570,7 @@
        <property name="font">
         <font>
          <family>Arial</family>
-         <pointsize>13</pointsize>
+         <pointsize>10</pointsize>
          <italic>false</italic>
         </font>
        </property>
@@ -584,7 +584,7 @@
        <property name="font">
         <font>
          <family>Arial</family>
-         <pointsize>13</pointsize>
+         <pointsize>10</pointsize>
          <italic>false</italic>
         </font>
        </property>
@@ -598,7 +598,7 @@
        <property name="font">
         <font>
          <family>Arial</family>
-         <pointsize>13</pointsize>
+         <pointsize>10</pointsize>
          <italic>false</italic>
         </font>
        </property>
@@ -612,7 +612,7 @@
        <property name="font">
         <font>
          <family>Arial</family>
-         <pointsize>13</pointsize>
+         <pointsize>10</pointsize>
          <italic>false</italic>
         </font>
        </property>
@@ -626,7 +626,7 @@
        <property name="font">
         <font>
          <family>Arial</family>
-         <pointsize>13</pointsize>
+         <pointsize>10</pointsize>
          <italic>false</italic>
         </font>
        </property>
@@ -640,7 +640,7 @@
        <property name="font">
         <font>
          <family>Arial</family>
-         <pointsize>13</pointsize>
+         <pointsize>10</pointsize>
          <italic>false</italic>
         </font>
        </property>
@@ -655,15 +655,15 @@
     <property name="geometry">
      <rect>
       <x>440</x>
-      <y>360</y>
-      <width>261</width>
-      <height>221</height>
+      <y>290</y>
+      <width>141</width>
+      <height>121</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>Arial</family>
-      <pointsize>13</pointsize>
+      <pointsize>10</pointsize>
       <italic>false</italic>
      </font>
     </property>
@@ -676,7 +676,7 @@
        <property name="font">
         <font>
          <family>Arial</family>
-         <pointsize>13</pointsize>
+         <pointsize>10</pointsize>
          <italic>false</italic>
         </font>
        </property>
@@ -690,7 +690,7 @@
        <property name="font">
         <font>
          <family>Arial</family>
-         <pointsize>13</pointsize>
+         <pointsize>10</pointsize>
          <italic>false</italic>
         </font>
        </property>
@@ -704,7 +704,7 @@
        <property name="font">
         <font>
          <family>Arial</family>
-         <pointsize>13</pointsize>
+         <pointsize>10</pointsize>
          <italic>false</italic>
         </font>
        </property>
@@ -718,16 +718,16 @@
    <widget class="QCheckBox" name="checkBox_3">
     <property name="geometry">
      <rect>
-      <x>580</x>
-      <y>30</y>
+      <x>390</x>
+      <y>20</y>
       <width>101</width>
-      <height>31</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>Arial</family>
-      <pointsize>13</pointsize>
+      <pointsize>10</pointsize>
       <italic>false</italic>
      </font>
     </property>
@@ -750,16 +750,16 @@
    <widget class="QPushButton" name="pushButton">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>500</y>
+      <x>20</x>
+      <y>370</y>
       <width>221</width>
-      <height>81</height>
+      <height>41</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>Courier New</family>
-      <pointsize>26</pointsize>
+      <pointsize>10</pointsize>
       <italic>false</italic>
       <bold>false</bold>
      </font>
@@ -775,15 +775,15 @@
     <property name="geometry">
      <rect>
       <x>420</x>
-      <y>90</y>
-      <width>264</width>
-      <height>264</height>
+      <y>60</y>
+      <width>180</width>
+      <height>180</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>Arial</family>
-      <pointsize>13</pointsize>
+      <pointsize>10</pointsize>
       <italic>false</italic>
      </font>
     </property>
@@ -795,15 +795,15 @@
     <property name="geometry">
      <rect>
       <x>330</x>
-      <y>500</y>
+      <y>360</y>
       <width>101</width>
-      <height>81</height>
+      <height>51</height>
      </rect>
     </property>
     <property name="font">
      <font>
       <family>Arial</family>
-      <pointsize>13</pointsize>
+      <pointsize>10</pointsize>
       <italic>false</italic>
      </font>
     </property>
@@ -816,7 +816,7 @@
        <property name="font">
         <font>
          <family>Arial</family>
-         <pointsize>13</pointsize>
+         <pointsize>10</pointsize>
          <italic>false</italic>
         </font>
        </property>
@@ -830,7 +830,7 @@
        <property name="font">
         <font>
          <family>Arial</family>
-         <pointsize>13</pointsize>
+         <pointsize>10</pointsize>
          <italic>false</italic>
         </font>
        </property>
@@ -863,8 +863,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>728</width>
-     <height>24</height>
+     <width>610</width>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuHelp">
